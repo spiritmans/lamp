@@ -202,10 +202,10 @@ apr_install () {
 					if [ $? -eq 0 ];then
 			   			make install
 			     		if [ $? -eq 0 ];then
-							clear
-							echo "Apr install success!"
+						clear
+						echo "Apr install success!"
 			     		else
-							echo "Apr make install fail!";exit 1
+						echo "Apr make install fail!";exit 1
 			     		fi
 					else
 				   		echo "Apr make fail!";exit 1
@@ -239,10 +239,10 @@ apr_util_install () {
 					if [ $? -eq 0 ];then
 			   			make install
 			     		if [ $? -eq 0 ];then
-							clear
-							echo "Apr-util install success!"
+						clear
+						echo "Apr-util install success!"
 			     		else
-							echo "Apr-util make install fail!";exit 1
+						echo "Apr-util make install fail!";exit 1
 			     		fi
 					else
 			   			echo "Apr-util make fail!";exit 1
@@ -276,10 +276,10 @@ apr_iconv_install () {
 					if [ $? -eq 0 ];then
 			   			make install
 			     		if [ $? -eq 0 ];then
-							clear
-							echo "Apr-iconv install success!"
+						clear
+						echo "Apr-iconv install success!"
 			     		else
-							echo "Apr-iconv make install fail!";exit 1
+						echo "Apr-iconv make install fail!";exit 1
 			     		fi
 					else
 			   			echo "Apr-iconv make fail!";exit 1
@@ -315,10 +315,10 @@ httpd_install () {
 					if [ $? -eq 0 ];then
 			   			make install
 			     		if [ $? -eq 0 ];then
-							clear
-							echo "Httpd install success!"
+						clear
+						echo "Httpd install success!"
 			     		else
-							echo "Httpd make install fail!";exit 1
+						echo "Httpd make install fail!";exit 1
 			     		fi
 					else
 			   			echo "Httpd make fail!";exit 1
@@ -575,9 +575,9 @@ else
 										clear
 										echo "ltdl install success"
 										ln -sf /usr/local/lib/libmcrypt.la /usr/lib/libmcrypt.la
-    									ln -sf /usr/local/lib/libmcrypt.so /usr/lib/libmcrypt.so
-    									ln -sf /usr/local/lib/libmcrypt.so.4 /usr/lib/libmcrypt.so.4
-    									ln -sf /usr/local/lib/libmcrypt.so.4.4.8 /usr/lib/libmcrypt.so.4.4.8
+    										ln -sf /usr/local/lib/libmcrypt.so /usr/lib/libmcrypt.so
+    										ln -sf /usr/local/lib/libmcrypt.so.4 /usr/lib/libmcrypt.so.4
+    										ln -sf /usr/local/lib/libmcrypt.so.4.4.8 /usr/lib/libmcrypt.so.4.4.8
 										#ln -s /usr/local/bin/libmcrypt-config /usr/bin/
 										ldconfig
 										#export LD_LIBRARY_PATH=/usr/local/lib: LD_LIBRARY_PATH
@@ -1153,9 +1153,9 @@ EOF
 			clear
 		else
 			echo 	"==========================================="
-	       	Red 	"|Warning!!You had too many wrong input!!! |"
-	       	Red 	"|Please Enter Right Choice Again After 5s |"
-	       	echo 	"==========================================="
+	       		Red 	"|Warning!!You had too many wrong input!!! |"
+	       		Red 	"|Please Enter Right Choice Again After 5s |"
+	       		echo 	"==========================================="
 			for i in `seq -w 5 -1 1`
 			do
 				echo -en "\b\b$i"
