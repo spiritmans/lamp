@@ -17,11 +17,17 @@ SOFT=/usr/local/src/lamp/soft
 APR=apr-1.5.2.tar.bz2
 APR_UTIL=apr-util-1.5.4.tar.bz2
 APR_ICONV=apr-iconv-1.2.1.tar.bz2
+CMAKE=cmake-2.8.8.tar.gz 
 LIBMCRYPT=libmcrypt-2.5.8.tar.gz
-LIBICONV=libiconv-1.14.tar.gz
-MCRYPT=mcrypt-2.6.8.tar.gz
+LIBICONV=libiconv-1.7.tar.gz
 MHASH=mhash-0.9.9.9.tar.gz
-CMAKE=cmake-2.6.4-7.el5.i386.rpm
+MCRYPT=mcrypt-2.6.8.tar.gz
+MEMCACHE=memcache-3.0.8.tgz
+LIBMEMCACHED=libmemcached-1.0.2.tar.gz
+MEMCACHED=memcached-2.1.0.tgz
+IMAGEMAGICK=ImageMagick-6.9.2-0.tar.gz
+IMAGICK=imagick-3.1.1.tgz
+
 #################################################
 
 #set time
@@ -50,19 +56,15 @@ end_time() {
 Color_Text() {
   	echo -e " \e[0;$2m$1\e[0m"
 }
-
 Red() {
   	echo $(Color_Text "$1" "31")
 }
-
 Green() {
   	echo $(Color_Text "$1" "32")
 }
-
 Yellow() {
   	echo $(Color_Text "$1" "33")
 }
-
 Blue() {
   	echo $(Color_Text "$1" "34")
 }
@@ -1112,6 +1114,7 @@ EOF
 				Blue "You had chose $HTTPD $MYSQL $PHP for LAMP install."
 				sleep 5
 				env_check
+				apr_install;apr_util_install;apr_iconv_install
 				httpd_install
 				cmake_install;mysql_install;mysql_set
 				libiconv_install;libmcrypt_install;mhash_install;mcrypt_install
@@ -1120,7 +1123,7 @@ EOF
 				set_php
 				end_time
 				if [ $? -eq 0 ];then
-					Green "Congratulation!You had installed $HTTPD $MYSQL $PHP for LNMP successed!"
+					Green "Congratulation!You had installed $HTTPD $MYSQL $PHP for LAMP successed!"
 					exit 0
 				fi
 				;;
