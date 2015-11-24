@@ -342,7 +342,7 @@ httpd_set() {
 	cp $apache/bin/apachectl /etc/init.d/httpd
 	echo "<?php
 	phpinfo();
-	?>" >>$apache/htdocs/index.php
+?>" >>$apache/htdocs/index.php
 }
 
 #cmake install
