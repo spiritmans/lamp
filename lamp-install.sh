@@ -83,12 +83,12 @@ choose_httpd_version() {
 		1)
 		HTTPD=httpd-2.2.31.tar.gz
 		Blue "You will install $HTTPD"
-		sleep 3
+		sleep 2
 		;;
 		2)
 		HTTPD=httpd-2.4.16.tar.gz
 		Blue "You will install $HTTPD"
-		sleep 3
+		sleep 2
 		;;
 		0)
 		clear
@@ -97,7 +97,7 @@ choose_httpd_version() {
 		*)
 		HTTPD=httpd-2.4.16.tar.gz
 		Blue "You will install $HTTPD"
-		sleep 3
+		sleep 2
 		;;
 	esac	
 }
@@ -111,12 +111,12 @@ choose_mysql_version() {
 		1)
 		MYSQL=mysql-5.5.46.tar.gz
 		Blue "You will install $MYSQL"
-		sleep 3
+		sleep 2
 		;;
 		2)
 		MYSQL=mysql-5.6.27.tar.gz
 		Blue "You will install $MYSQL"
-		sleep 3
+		sleep 2
 		;;
 		0)
 		clear
@@ -125,7 +125,7 @@ choose_mysql_version() {
 		*)
 		MYSQL=mysql-5.6.27.tar.gz
 		Blue "You will install $MYSQL"
-		sleep 3
+		sleep 2
 		;;
 	esac	
 }
@@ -140,17 +140,17 @@ choose_php_version() {
 		1)
 		PHP=php-5.4.36.tar.gz
 		Blue "You will install $PHP"
-		sleep 3
+		sleep 2
 		;;
 		2)
 		PHP=php-5.5.30.tar.gz
 		Blue "You will install $PHP"
-		sleep 3
+		sleep 2
 		;;
 		3)
 		PHP=php-5.6.14.tar.gz
 		Blue "You will install $PHP"
-		sleep 3
+		sleep 2
 		;;
 		0)
 		clear
@@ -159,7 +159,7 @@ choose_php_version() {
 		*)
 		PHP=php-5.6.14.tar.gz
 		Blue "You will install $PHP"
-		sleep 3
+		sleep 2
 		;;
 	esac
 }			
@@ -202,10 +202,10 @@ apr_install () {
 					if [ $? -eq 0 ];then
 			   			make install
 			     		if [ $? -eq 0 ];then
-						clear
-						echo "Apr install success!"
+							clear
+							echo "Apr install success!"
 			     		else
-						echo "Apr make install fail!";exit 1
+							echo "Apr make install fail!";exit 1
 			     		fi
 					else
 				   		echo "Apr make fail!";exit 1
@@ -239,10 +239,10 @@ apr_util_install () {
 					if [ $? -eq 0 ];then
 			   			make install
 			     		if [ $? -eq 0 ];then
-						clear
-						echo "Apr-util install success!"
+							clear
+							echo "Apr-util install success!"
 			     		else
-						echo "Apr-util make install fail!";exit 1
+							echo "Apr-util make install fail!";exit 1
 			     		fi
 					else
 			   			echo "Apr-util make fail!";exit 1
@@ -276,10 +276,10 @@ apr_iconv_install () {
 					if [ $? -eq 0 ];then
 			   			make install
 			     		if [ $? -eq 0 ];then
-						clear
-						echo "Apr-iconv install success!"
+							clear
+							echo "Apr-iconv install success!"
 			     		else
-						echo "Apr-iconv make install fail!";exit 1
+							echo "Apr-iconv make install fail!";exit 1
 			     		fi
 					else
 			   			echo "Apr-iconv make fail!";exit 1
@@ -308,17 +308,16 @@ httpd_install () {
 		  	httpd=`echo $HTTPD |awk -F ".tar" '{print $1}'`
 		    cd $SOFT/$httpd
 		    if [ -f configure ];then
-		   		./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util --enable-module=so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-cache --enable-file-cache --enable-mem-cache --enable-disk-cache --enable-static-support --enable-static-ab --disable-userdir --with-mpm=prefork --enable-nonportable-atomics --with-sendfile --enable-mods-shared=most --enable-headers --enable-mime-magic --enable-proxy --enable-so --with-ssl --enable-ssl --with-pcre --with-included-apr --enable-mpms-shared=all --enable-remoteip
-		      	#./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util/ --enable-module=so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-cache --enable-file-cache --enable-mem-cache --enable-disk-cache --enable-static-support --enable-static-ab --disable-userdir --with-mpm=prefork --enable-nonportable-atomics --disable-ipv6  --with-sendfile
+		      	./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util/ --enable-so --enable-module=so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-cache --enable-file-cache --enable-mem-cache --enable-disk-cache --enable-static-support --enable-static-ab --disable-userdir --with-mpm=prefork --enable-nonportable-atomics --disable-ipv6 --with-sendfile
 		     	if [ $? -eq 0 ];then
 					make
 					if [ $? -eq 0 ];then
 			   			make install
 			     		if [ $? -eq 0 ];then
-						clear
-						echo "Httpd install success!"
+							clear
+							echo "Httpd install success!"
 			     		else
-						echo "Httpd make install fail!";exit 1
+							echo "Httpd make install fail!";exit 1
 			     		fi
 					else
 			   			echo "Httpd make fail!";exit 1
@@ -335,99 +334,110 @@ httpd_install () {
 	fi
 }
 
+httpd_set() {
+	apache=/usr/local/apache
+	cd $SOFT
+	mv $apache/conf/httpd.conf $apache/conf/httpd.conf.default
+	cp ../httpd.conf $apache/conf/
+	cp $apache/bin/apachectl /etc/init.d/httpd
+	echo "<?php
+	phpinfo();
+	?>" >>$apache/htdocs/index.php
+}
+
 #cmake install
 cmake_install () {
-if [ ! -f $SOFT/$CMAKE ];then
-	echo "There is no $CMAKE"
-else
-	echo "tar $CAMKE>>>>>>>>>>>>>>>>>>>>>>>>>>"
-	cd $SOFT
-	tar fx $SOFT/$CMAKE
-	if [ $? -eq 0 ];then
-		cmake=`echo $CMAKE |awk -F ".tar" '{print $1}'`
-		cd $cmake
-		echo "Cmake configure.........."
-		./bootstrap
+	if [ ! -f $SOFT/$CMAKE ];then
+		echo "There is no $CMAKE"
+	else
+		echo "tar $CAMKE>>>>>>>>>>>>>>>>>>>>>>>>>>"
+		cd $SOFT
+		tar fx $SOFT/$CMAKE
 		if [ $? -eq 0 ];then
-			gmake
+			cmake=`echo $CMAKE |awk -F ".tar" '{print $1}'`
+			cd $cmake
+			echo "Cmake configure.........."
+			./bootstrap
 			if [ $? -eq 0 ];then
-				gmake install
+				gmake
 				if [ $? -eq 0 ];then
-					clear
-					echo "Cmake install success"
+					gmake install
+					if [ $? -eq 0 ];then
+						clear
+						echo "Cmake install success"
+					else
+						clear
+						echo "Cmake gmake_install fail";exit 1
+					fi
 				else
 					clear
-					echo "Cmake gmake_install fail";exit 1
+					echo "Cmake gmake fail";exit 1
 				fi
 			else
 				clear
-				echo "Cmake gmake fail";exit 1
-			fi
-		else
-			clear
-			echo "Cmake configure fail";exit 1
-		fi			
-   	else
-   		clear
-   		echo "tar cmake fail";exit 1
-   	fi
-fi
+				echo "Cmake configure fail";exit 1
+			fi			
+	   	else
+	   		clear
+	   		echo "tar cmake fail";exit 1
+	   	fi
+	fi
 }
 
 #mysql install
 mysql_install () {
-[ ! -d /usr/local/mysql/data ] && mkdir -p /usr/local/mysql/data
-if [ ! -f $SOFT/$MYSQL ];then
-   	echo "There is no $MYSQL!"
-else
-   	echo "tar $MYSQL>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-   	cd $SOFT
-   	tar fx $SOFT/$MYSQL
-	if [ $? -eq 0 ];then
-	  	echo "tar $MYSQL success!"
-	  	mysql=`echo $MYSQL |awk -F ".tar" '{print $1}'`
-	  	if [ -d $SOFT/$mysql ];then
-	    	cd $SOFT/$mysql
-	    	echo "Mysql cmake.........."
-	    	cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/usr/local/mysql/data/ -DMYSQL_UNIX_ADDR=/usr/local/mysql/mysql.sock -DWITH_INNODBBASE_STORAGE_ENGINE=1 -DENABLE_LOCAL_INFILE=1 -DEXTRA_CHARSETS=all -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_USER=mysql -DWITH_DEBUG=0 -DWITH_EMBEDED_SERVER=0
-	      	if [ $? -eq 0 ];then
-				echo "Mysql cmake success!"
-				make
-					if [ $? -eq 0 ];then
-		   				echo "Mysql make success!"
-		   				make install
-		     			if [ $? -eq 0 ];then
-		     				clear
-							echo "Mysql install success!"
-		     			else
-		     				clear
-							echo "Mysql make install fail!";exit 1
-		     			fi
-					else
-						clear
-		   				echo "Mysql make fail!";exit 1
-					fi
-	      	else
-	      		clear
-				echo "Mysql cmake fail!";exit 1
-	      	fi
-	  	else
-	  		clear
-	    	echo "$SOFT/$mysql is not found!";exit 1
-	  	fi
+	[ ! -d /usr/local/mysql/data ] && mkdir -p /usr/local/mysql/data
+	if [ ! -f $SOFT/$MYSQL ];then
+	   	echo "There is no $MYSQL!"
 	else
-		clear
-	  echo "tar $MYSQL fail!";exit 1
+	   	echo "tar $MYSQL>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+	   	cd $SOFT
+	   	tar fx $SOFT/$MYSQL
+		if [ $? -eq 0 ];then
+		  	echo "tar $MYSQL success!"
+		  	mysql=`echo $MYSQL |awk -F ".tar" '{print $1}'`
+		  	if [ -d $SOFT/$mysql ];then
+		    	cd $SOFT/$mysql
+		    	echo "Mysql cmake.........."
+		    	cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/usr/local/mysql/data/ -DMYSQL_UNIX_ADDR=/usr/local/mysql/mysql.sock -DWITH_INNODBBASE_STORAGE_ENGINE=1 -DENABLE_LOCAL_INFILE=1 -DEXTRA_CHARSETS=all -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DMYSQL_USER=mysql -DWITH_DEBUG=0 -DWITH_EMBEDED_SERVER=0
+		      	if [ $? -eq 0 ];then
+					echo "Mysql cmake success!"
+					make
+						if [ $? -eq 0 ];then
+			   				echo "Mysql make success!"
+			   				make install
+			     			if [ $? -eq 0 ];then
+			     				clear
+								echo "Mysql install success!"
+			     			else
+			     				clear
+								echo "Mysql make install fail!";exit 1
+			     			fi
+						else
+							clear
+			   				echo "Mysql make fail!";exit 1
+						fi
+		      	else
+		      		clear
+					echo "Mysql cmake fail!";exit 1
+		      	fi
+		  	else
+		  		clear
+		    	echo "$SOFT/$mysql is not found!";exit 1
+		  	fi
+		else
+			clear
+		  echo "tar $MYSQL fail!";exit 1
+		fi
 	fi
-fi
 }
 
 #mysql set
 mysql_set () {
-id mysql >/dev/null
-if [ $? -ne 0 ];then
-	useradd mysql
-fi
+	id mysql >/dev/null
+	if [ $? -ne 0 ];then
+		useradd mysql
+	fi
 	chown -R mysql.mysql /usr/local/mysql
 	cd $SOFT/$mysql
 	rm -fr /etc/my.cnf
@@ -443,276 +453,276 @@ fi
 
 #libiconv install
 libiconv_install () {
-if [ ! -f $SOFT/$LIBICONV ];then
-   	echo "There is no $LIBICONV!"
-else
-   	echo "tar $LIBICONV>>>>>>>>>>>>>>>>>>>>>>>>>"
-   	cd $SOFT
-   	tar fx $SOFT/$LIBICONV
-   	if [ $? -eq 0 ];then
-      	echo "tar $LIBICONV success!"
-      	libiconv=`echo $LIBICONV |awk -F '.tar' '{print $1}'`
-      	if [ -d $SOFT/$libiconv ];then
-			cd $SOFT/$libiconv
-			if [ -f configure ];then
-	  			./configure --prefix=/usr/local/libiconv
-	  			if [ $? -eq 0 ];then
-	     			make
-	     			if [ $? -eq 0 ];then
-						make install
-						if [ $? -eq 0 ];then
-							clear
-		   					echo "Libiconv install success!"
-						else
-							clear
-		   					echo "Libiconv make install fail!";exit 1
-						fi
-	     			else
-	     				clear
-						echo "Libiconv make fail!";exit 1
-	     			fi
-	  			else
-	  				clear
-	     			echo "Libiconv configure fail!";exit 1
-	  			fi
-			else
-				clear
-	  			echo "There is no configure!";exit 1
-			fi
-      	else
-      		clear
-			echo "$libiconv is not found!";exit 1
-      	fi
-   	else
-   		clear
-      	echo "tar $LIBICONV fail!";exit 1
-   	fi
-fi
+	if [ ! -f $SOFT/$LIBICONV ];then
+	   	echo "There is no $LIBICONV!"
+	else
+	   	echo "tar $LIBICONV>>>>>>>>>>>>>>>>>>>>>>>>>"
+	   	cd $SOFT
+	   	tar fx $SOFT/$LIBICONV
+	   	if [ $? -eq 0 ];then
+	      	echo "tar $LIBICONV success!"
+	      	libiconv=`echo $LIBICONV |awk -F '.tar' '{print $1}'`
+	      	if [ -d $SOFT/$libiconv ];then
+				cd $SOFT/$libiconv
+				if [ -f configure ];then
+		  			./configure --prefix=/usr/local/libiconv
+		  			if [ $? -eq 0 ];then
+		     			make
+		     			if [ $? -eq 0 ];then
+							make install
+							if [ $? -eq 0 ];then
+								clear
+			   					echo "Libiconv install success!"
+							else
+								clear
+			   					echo "Libiconv make install fail!";exit 1
+							fi
+		     			else
+		     				clear
+							echo "Libiconv make fail!";exit 1
+		     			fi
+		  			else
+		  				clear
+		     			echo "Libiconv configure fail!";exit 1
+		  			fi
+				else
+					clear
+		  			echo "There is no configure!";exit 1
+				fi
+	      	else
+	      		clear
+				echo "$libiconv is not found!";exit 1
+	      	fi
+	   	else
+	   		clear
+	      	echo "tar $LIBICONV fail!";exit 1
+	   	fi
+	fi
 }
 
 #mhash install
 mhash_install () {
-if [ ! -f $SOFT/$MHASH ];then
-   	echo "There is no $MHASH!"
-else
-   	echo "tar $MHASH>>>>>>>>>>>>>>>>>>>>>>>>>"
-   	cd $SOFT
-   	tar fx $SOFT/$MHASH
-   	if [ $? -eq 0 ];then
-      	echo "tar $MHASH success!"
-      	mhash=`echo $MHASH |awk -F '.tar' '{print $1}'`
-      	if [ -d $SOFT/$mhash ];then
-			cd $SOFT/$mhash
-			if [ -f configure ];then
-	  			./configure
-	  			if [ $? -eq 0 ];then
-	     			make
-	     			if [ $? -eq 0 ];then
-						make install
-						if [ $? -eq 0 ];then
-							clear
-		   					echo "Mhash install success!"
-		   					ln -sf /usr/local/lib/libmhash.a /usr/lib/libmhash.a
-							ln -sf /usr/local/lib/libmhash.la /usr/lib/libmhash.la
-							ln -sf /usr/local/lib/libmhash.so /usr/lib/libmhash.so
-							ln -sf /usr/local/lib/libmhash.so.2 /usr/lib/libmhash.so.2
-							ln -sf /usr/local/lib/libmhash.so.2.0.1 /usr/lib/libmhash.so.2.0.1
-							ldconfig
-						else
-							clear
-		   					echo "Mhash make install fail!";exit 1
-						fi
-	     			else
-	     				clear
-						echo "Mhash make fail!";exit 1
-	     			fi
-	  			else
-	  				clear
-	     			echo "Mhash configure fail!";exit 1
-	  			fi
-			else
-				clear
-	  			echo "There is no configure!";exit 1
-			fi
-      	else
-      		clear
-			echo "$mhash is not found!";exit 1
-      	fi
-   	else
-   		clear
-      	echo "tar $MHASH fail!";exit 1
-   	fi
-fi
+	if [ ! -f $SOFT/$MHASH ];then
+	   	echo "There is no $MHASH!"
+	else
+	   	echo "tar $MHASH>>>>>>>>>>>>>>>>>>>>>>>>>"
+	   	cd $SOFT
+	   	tar fx $SOFT/$MHASH
+	   	if [ $? -eq 0 ];then
+	      	echo "tar $MHASH success!"
+	      	mhash=`echo $MHASH |awk -F '.tar' '{print $1}'`
+	      	if [ -d $SOFT/$mhash ];then
+				cd $SOFT/$mhash
+				if [ -f configure ];then
+		  			./configure
+		  			if [ $? -eq 0 ];then
+		     			make
+		     			if [ $? -eq 0 ];then
+							make install
+							if [ $? -eq 0 ];then
+								clear
+			   					echo "Mhash install success!"
+			   					ln -sf /usr/local/lib/libmhash.a /usr/lib/libmhash.a
+								ln -sf /usr/local/lib/libmhash.la /usr/lib/libmhash.la
+								ln -sf /usr/local/lib/libmhash.so /usr/lib/libmhash.so
+								ln -sf /usr/local/lib/libmhash.so.2 /usr/lib/libmhash.so.2
+								ln -sf /usr/local/lib/libmhash.so.2.0.1 /usr/lib/libmhash.so.2.0.1
+								ldconfig
+							else
+								clear
+			   					echo "Mhash make install fail!";exit 1
+							fi
+		     			else
+		     				clear
+							echo "Mhash make fail!";exit 1
+		     			fi
+		  			else
+		  				clear
+		     			echo "Mhash configure fail!";exit 1
+		  			fi
+				else
+					clear
+		  			echo "There is no configure!";exit 1
+				fi
+	      	else
+	      		clear
+				echo "$mhash is not found!";exit 1
+	      	fi
+	   	else
+	   		clear
+	      	echo "tar $MHASH fail!";exit 1
+	   	fi
+	fi
 }
 
 #libmcrypt install
 libmcrypt_install () {
-if [ ! -f $SOFT/$LIBMCRYPT ];then
-   	echo "There is no $LIBMCRYPT!";exit 1
-else
-   	echo "tar $LIBMCRYPT>>>>>>>>>>>>>>>>>>>>>>>>>"
-   	cd $SOFT
-   	tar fx $SOFT/$LIBMCRYPT
-   	if [ $? -eq 0 ];then
-      	echo "tar $LIBMCRYPT success!"
-      	libmcrypt=`echo $LIBMCRYPT |awk -F '.tar' '{print $1}'`
-      	if [ -d $SOFT/$libmcrypt ];then
-			cd $SOFT/$libmcrypt 
-				if [ -f configure ];then
-	    			./configure
-	    			if [ $? -eq 0 ];then
-	      				make
-	     				if [ $? -eq 0 ];then
-							make install
-							if [ $? -eq 0 ];then
-								clear
-								echo "libmcrypt install success!"
-								/sbin/ldconfig
-								if [ -d libltdl ];then
-									cd libltdl
-									./configure --enable-ltdl-install;make;make install
-									if [ $? -eq 0 ];then
-										clear
-										echo "ltdl install success"
-										ln -sf /usr/local/lib/libmcrypt.la /usr/lib/libmcrypt.la
-    										ln -sf /usr/local/lib/libmcrypt.so /usr/lib/libmcrypt.so
-    										ln -sf /usr/local/lib/libmcrypt.so.4 /usr/lib/libmcrypt.so.4
-    										ln -sf /usr/local/lib/libmcrypt.so.4.4.8 /usr/lib/libmcrypt.so.4.4.8
-										#ln -s /usr/local/bin/libmcrypt-config /usr/bin/
-										ldconfig
-										#export LD_LIBRARY_PATH=/usr/local/lib: LD_LIBRARY_PATH
-									else
-										echo "ltdl install fail"
-									fi
-								else
+	if [ ! -f $SOFT/$LIBMCRYPT ];then
+	   	echo "There is no $LIBMCRYPT!";exit 1
+	else
+	   	echo "tar $LIBMCRYPT>>>>>>>>>>>>>>>>>>>>>>>>>"
+	   	cd $SOFT
+	   	tar fx $SOFT/$LIBMCRYPT
+	   	if [ $? -eq 0 ];then
+	      	echo "tar $LIBMCRYPT success!"
+	      	libmcrypt=`echo $LIBMCRYPT |awk -F '.tar' '{print $1}'`
+	      	if [ -d $SOFT/$libmcrypt ];then
+				cd $SOFT/$libmcrypt 
+					if [ -f configure ];then
+		    			./configure
+		    			if [ $? -eq 0 ];then
+		      				make
+		     				if [ $? -eq 0 ];then
+								make install
+								if [ $? -eq 0 ];then
 									clear
-									echo "there is no libltdl"
-								fi	
-			      			else
-			      				clear
-								echo "Libmcrypt make install fail!";exit 1
+									echo "libmcrypt install success!"
+									/sbin/ldconfig
+									if [ -d libltdl ];then
+										cd libltdl
+										./configure --enable-ltdl-install;make;make install
+										if [ $? -eq 0 ];then
+											clear
+											echo "ltdl install success"
+											ln -sf /usr/local/lib/libmcrypt.la /usr/lib/libmcrypt.la
+	    									ln -sf /usr/local/lib/libmcrypt.so /usr/lib/libmcrypt.so
+	    									ln -sf /usr/local/lib/libmcrypt.so.4 /usr/lib/libmcrypt.so.4
+	    									ln -sf /usr/local/lib/libmcrypt.so.4.4.8 /usr/lib/libmcrypt.so.4.4.8
+											#ln -s /usr/local/bin/libmcrypt-config /usr/bin/
+											ldconfig
+											#export LD_LIBRARY_PATH=/usr/local/lib: LD_LIBRARY_PATH
+										else
+											echo "ltdl install fail"
+										fi
+									else
+										clear
+										echo "there is no libltdl"
+									fi	
+				      			else
+				      				clear
+									echo "Libmcrypt make install fail!";exit 1
+								fi
+							else
+								clear
+								echo "Libmcrypt make fail!";exit 1
 							fi
-						else
-							clear
-							echo "Libmcrypt make fail!";exit 1
-						fi
-	    			else
-	    				clear
-	     				echo "Libmcrypt configure fail!";exit 1
-	    			fi
-				else
-					clear
-	  				echo "There is no configure!";exit 1
-				fi
-      	else
-      		clear
-			echo "$libmcrypt is not found!";exit 1
-      	fi
-   	else
-   		clear
-      	echo "tar $LIBMCRYPT fail!";exit 1
-   	fi
-fi
+		    			else
+		    				clear
+		     				echo "Libmcrypt configure fail!";exit 1
+		    			fi
+					else
+						clear
+		  				echo "There is no configure!";exit 1
+					fi
+	      	else
+	      		clear
+				echo "$libmcrypt is not found!";exit 1
+	      	fi
+	   	else
+	   		clear
+	      	echo "tar $LIBMCRYPT fail!";exit 1
+	   	fi
+	fi
 }
 #mcrypt install
 mcrypt_install () {
-if [ ! -f $SOFT/$MCRYPT ];then
-   	echo "There is no $MCRYPT!";exit 1
-else
-   	echo "..........tar $MCRYPT.........."
-   	cd $SOFT
-   	tar fx $SOFT/$MCRYPT
-   	if [ $? -eq 0 ];then
-      	echo "tar $MCRYPT success!"
-      	mcrypt=`echo $MCRYPT |awk -F '.tar' '{print $1}'`
-      	if [ -d $SOFT/$mcrypt ];then
-			cd $SOFT/$mcrypt && /sbin/ldconfig
-				if [ -f configure ];then
-	    			./configure
-	    			if [ $? -eq 0 ];then
-	      				make
-	     				if [ $? -eq 0 ];then
-							make install
-							if [ $? -eq 0 ];then
+	if [ ! -f $SOFT/$MCRYPT ];then
+	   	echo "There is no $MCRYPT!";exit 1
+	else
+	   	echo "..........tar $MCRYPT.........."
+	   	cd $SOFT
+	   	tar fx $SOFT/$MCRYPT
+	   	if [ $? -eq 0 ];then
+	      	echo "tar $MCRYPT success!"
+	      	mcrypt=`echo $MCRYPT |awk -F '.tar' '{print $1}'`
+	      	if [ -d $SOFT/$mcrypt ];then
+				cd $SOFT/$mcrypt && /sbin/ldconfig
+					if [ -f configure ];then
+		    			./configure
+		    			if [ $? -eq 0 ];then
+		      				make
+		     				if [ $? -eq 0 ];then
+								make install
+								if [ $? -eq 0 ];then
+									clear
+									echo "mcrypt install success!"
+				      			else
+				      				clear
+									echo "mcrypt make install fail!";exit 1
+								fi
+							else
 								clear
-								echo "mcrypt install success!"
-			      			else
-			      				clear
-								echo "mcrypt make install fail!";exit 1
+								echo "mcrypt make fail!";exit 1
 							fi
-						else
-							clear
-							echo "mcrypt make fail!";exit 1
-						fi
-	    			else
-	    				clear
-	     				echo "mcrypt configure fail!";exit 1
-	    			fi
-				else
-					clear
-	  				echo "There is no configure!";exit 1
-				fi
-      	else
-      		clear
-			echo "$mcrypt is not found!";exit 1
-      	fi
-   	else
-   		clear
-      	echo "tar $MCRYPT fail!";exit 1
-   	fi
-fi
+		    			else
+		    				clear
+		     				echo "mcrypt configure fail!";exit 1
+		    			fi
+					else
+						clear
+		  				echo "There is no configure!";exit 1
+					fi
+	      	else
+	      		clear
+				echo "$mcrypt is not found!";exit 1
+	      	fi
+	   	else
+	   		clear
+	      	echo "tar $MCRYPT fail!";exit 1
+	   	fi
+	fi
 }
 
 
 #php install
 php_install () {
-ln -s /usr/lib64/libldap* /usr/lib/
-if [ ! -f $SOFT/$PHP ];then
-   	echo "There is no $PHP!"
-else
-   	echo "..........tar $PHP.........."
-   	cd $SOFT
-   	tar fx $SOFT/$PHP
-   	if [ $? -eq 0 ];then
-      	echo "tar $PHP success!"
-      	php=`echo $PHP |awk -F '.tar' '{print $1}'`
-      	if [ -d $SOFT/$php ];then
-			cd $SOFT/$php
-			if [ -f configure ];then
-	  			echo "Php configure.........."
-	  			./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-gd --enable-gd-native-ttf --with-gettext --with-libxml-dir=/usr --enable-xml--disable-rpath --enable-discard-path --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fastcgi --enable-fpm --enable-force-cgi-redirect --enable-mbstring --with-mcrypt --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-zip --enable-soap
-	  			if [ $? -eq 0 ];then
-	     			make
-	     			if [ $? -eq 0 ];then
-						make install
-						if [ $? -eq 0 ];then
-							clear
-		   					echo "Php install success!"
-						else
-							clear
-		   					echo "Php make install fail!";exit 1
-						fi
-	     			else
-	     				clear
-						echo "Php make fail!";exit 1
-	     			fi
-	  			else
-	  				clear
-	     			echo "Php configure fail!";exit 1
-	  			fi
-			else
-				clear
-	  			echo "There is no configure!";exit 1
-			fi
-     	else
-     		clear
-			echo "$php is not found!";exit 1
-    	fi
-   	else
-   		clear
-      	echo "tar $PHP fail!";exit 1
-   	fi
-fi
+	ln -s /usr/lib64/libldap* /usr/lib/
+	if [ ! -f $SOFT/$PHP ];then
+	   	echo "There is no $PHP!"
+	else
+	   	echo "..........tar $PHP.........."
+	   	cd $SOFT
+	   	tar fx $SOFT/$PHP
+	   	if [ $? -eq 0 ];then
+	      	echo "tar $PHP success!"
+	      	php=`echo $PHP |awk -F '.tar' '{print $1}'`
+	      	if [ -d $SOFT/$php ];then
+				cd $SOFT/$php
+				if [ -f configure ];then
+		  			echo "Php configure.........."
+		  			./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-apxs2=/usr/local/apache2/bin/apxs2--with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-gd --enable-gd-native-ttf --with-gettext --with-libxml-dir=/usr --enable-xml--disable-rpath --enable-discard-path --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fastcgi --enable-fpm --enable-force-cgi-redirect --enable-mbstring --with-mcrypt --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-zip --enable-soap
+		  			if [ $? -eq 0 ];then
+		     			make
+		     			if [ $? -eq 0 ];then
+							make install
+							if [ $? -eq 0 ];then
+								clear
+			   					echo "Php install success!"
+							else
+								clear
+			   					echo "Php make install fail!";exit 1
+							fi
+		     			else
+		     				clear
+							echo "Php make fail!";exit 1
+		     			fi
+		  			else
+		  				clear
+		     			echo "Php configure fail!";exit 1
+		  			fi
+				else
+					clear
+		  			echo "There is no configure!";exit 1
+				fi
+	     	else
+	     		clear
+				echo "$php is not found!";exit 1
+	    	fi
+	   	else
+	   		clear
+	      	echo "tar $PHP fail!";exit 1
+	   	fi
+	fi
 }
 
 #install php extend
@@ -947,25 +957,21 @@ install_imagick() {
 
 #set
 set_php () {
-id www >/dev/null
-if [ $? -ne 0 ];then
-	useradd www
-fi
-php=`echo $PHP |awk -F '.tar' '{print $1}'`
-cd $SOFT/$php
-cp php.ini-production /usr/local/php/etc/php.ini
-cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
-chmod 755 /usr/local/php/etc/*
-echo '
-extension = imagick.so
-extension = memcache.so
-extension = memcached.so
-#extension = mysql.so
-#extension = mysqli.so' >>/usr/local/php/etc/php.ini
-echo '
-<?php
-	phpinfo();
-?>' >>/var/www/html/index.php
+	id www >/dev/null
+	if [ $? -ne 0 ];then
+		useradd www
+	fi
+	php=`echo $PHP |awk -F '.tar' '{print $1}'`
+	cd $SOFT/$php
+	cp php.ini-production /usr/local/php/etc/php.ini
+	cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
+	chmod 755 /usr/local/php/etc/*
+	echo '
+	extension = imagick.so
+	extension = memcache.so
+	extension = memcached.so
+	;extension = mysql.so
+	;extension = mysqli.so' >>/usr/local/php/etc/php.ini
 }
 
 ######################################################
@@ -1009,7 +1015,7 @@ EOF
 				choose_httpd_version
 				env_check
 				apr_install;apr_util_install;apr_iconv_install
-				httpd_install
+				httpd_install;httpd_set
 				end_time
 				if [ $? -eq 0 ];then
 					Green "Congratulation!You had installed $HTTPD successed!"
@@ -1115,7 +1121,7 @@ EOF
 				sleep 5
 				env_check
 				apr_install;apr_util_install;apr_iconv_install
-				httpd_install
+				httpd_install;httpd_set
 				cmake_install;mysql_install;mysql_set
 				libiconv_install;libmcrypt_install;mhash_install;mcrypt_install
 				php_install
@@ -1153,9 +1159,9 @@ EOF
 			clear
 		else
 			echo 	"==========================================="
-	       		Red 	"|Warning!!You had too many wrong input!!! |"
-	       		Red 	"|Please Enter Right Choice Again After 5s |"
-	       		echo 	"==========================================="
+	       	Red 	"|Warning!!You had too many wrong input!!! |"
+	       	Red 	"|Please Enter Right Choice Again After 5s |"
+	       	echo 	"==========================================="
 			for i in `seq -w 5 -1 1`
 			do
 				echo -en "\b\b$i"
