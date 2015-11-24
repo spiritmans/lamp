@@ -308,7 +308,7 @@ httpd_install () {
 		  	httpd=`echo $HTTPD |awk -F ".tar" '{print $1}'`
 		    cd $SOFT/$httpd
 		    if [ -f configure ];then
-		      	./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util/ --enable-so --enable-module=so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-cache --enable-file-cache --enable-mem-cache --enable-disk-cache --enable-static-support --enable-static-ab --disable-userdir --with-mpm=prefork --enable-nonportable-atomics --disable-ipv6 --with-sendfile
+		      	./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util/ --enable-so --enable-module=so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-cache --enable-file-cache --enable-mem-cache --enable-disk-cache --enable-static-support --enable-static-ab --disable-userdir --with-mpm=worker --enable-nonportable-atomics --disable-ipv6 --with-sendfile
 		     	if [ $? -eq 0 ];then
 					make
 					if [ $? -eq 0 ];then
