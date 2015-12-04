@@ -308,7 +308,7 @@ httpd_install () {
 		  	httpd=`echo $HTTPD |awk -F ".tar" '{print $1}'`
 		    cd $SOFT/$httpd
 		    if [ -f configure ];then
-		      	./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util/ --enable-so --enable-module=so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-cache --enable-file-cache --enable-mem-cache --enable-disk-cache --enable-static-support --enable-static-ab --disable-userdir --with-mpm=prefork --enable-nonportable-atomics --disable-ipv6 --with-sendfile
+		      	./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util/ --enable-so --enable-module=so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-cache --enable-file-cache --enable-mem-cache --enable-disk-cache --enable-static-support --enable-static-ab --disable-userdir --with-mpm=worker --enable-nonportable-atomics --disable-ipv6 --with-sendfile
 		     	if [ $? -eq 0 ];then
 					make
 					if [ $? -eq 0 ];then
@@ -955,6 +955,66 @@ install_imagick() {
 #    fi
 #}
 
+install_gettext() {
+	cd $SOFT/$php/ext/gettext
+	/usr/local/php/bin/phpize
+	if [ $? -eq 0 ];then
+		./configure --with-php-config=/usr/local/php/bin/php-config
+		if [ $? -eq 0 ];then
+			make && make install 
+			if [ $? -eq 0 ];then
+				echo "gettext install successed."
+			else
+				echo "make failed":exit
+			fi
+		else
+			echo "configure failed!";exit 1
+		fi
+	else
+		echo "phpize failed!";exit 1
+	fi
+}
+
+install_ftp() {
+	cd $SOFT/$php/ext/ftp
+	/usr/local/php/bin/phpize
+	if [ $? -eq 0 ];then
+		./configure --with-php-config=/usr/local/php/bin/php-config
+		if [ $? -eq 0 ];then
+			make && make install 
+			if [ $? -eq 0 ];then
+				echo "ftp install successed."
+			else
+				echo "make failed":exit
+			fi
+		else
+			echo "configure failed!";exit 1
+		fi
+	else
+		echo "phpize failed!";exit 1
+	fi
+}
+
+install_tidy() {
+	cd $SOFT/$php/ext/tidy
+	/usr/local/php/bin/phpize
+	if [ $? -eq 0 ];then
+		./configure --with-php-config=/usr/local/php/bin/php-config
+		if [ $? -eq 0 ];then
+			make && make install 
+			if [ $? -eq 0 ];then
+				echo "tidy install successed."
+			else
+				echo "make failed":exit
+			fi
+		else
+			echo "configure failed!";exit 1
+		fi
+	else
+		echo "phpize failed!";exit 1
+	fi
+}
+
 #set
 set_php () {
 	id www >/dev/null
@@ -963,11 +1023,9 @@ set_php () {
 	fi
 	php=`echo $PHP |awk -F '.tar' '{print $1}'`
 	cd $SOFT/$php
-	cp sapi/fpm/init.d.ph-fpm /etc/init.d/php-fpm
 	cp php.ini-production /usr/local/php/etc/php.ini
 	cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
 	chmod 755 /usr/local/php/etc/*
-	chmod 755 /etc/init.d/php-fpm
 	echo '
 	extension = imagick.so
 	extension = memcache.so
@@ -1085,6 +1143,7 @@ EOF
 				libiconv_install;libmcrypt_install;mhash_install;mcrypt_install
 				php_install
 				install_memcache;install_libmemcached;install_memcached;install_imagemagick;install_imagick
+				install_gettext;install_ftp;install_tidy
 				set_php
 				end_time
 				if [ $? -eq 0 ];then
@@ -1128,6 +1187,7 @@ EOF
 				libiconv_install;libmcrypt_install;mhash_install;mcrypt_install
 				php_install
 				install_memcache;install_libmemcached;install_memcached;install_imagemagick;install_imagick
+				install_gettext;install_ftp;install_tidy
 				set_php
 				end_time
 				if [ $? -eq 0 ];then
