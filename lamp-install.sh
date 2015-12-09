@@ -176,7 +176,7 @@ env_check() {
 		cp -r ../lamp/* $SOFT/ || cp -r $dir/lamp/* $SOFT/
 	fi
 	echo "Yum install dependencies.............."
-	yum -y install gcc gcc-c++ pcre-devel make gd-devel autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel net-snmp-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel openldap openldap-devel  openldap-clients openldap-servers libxslt-devel libevent-devel ntp  libtool-ltdl bison libtool vim-enhanced
+	yum -y install gcc gcc-c++ pcre-devel make gd-devel autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel net-snmp-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel openldap openldap-devel  openldap-clients openldap-servers libxslt-devel libevent-devel ntp  libtidy libtidy-devel libtool-ltdl bison libtool vim-enhanced
 	if [ $? -eq 0 ];then
 		echo "yum install dependencies success!"
 		clear
@@ -308,7 +308,7 @@ httpd_install () {
 		  	httpd=`echo $HTTPD |awk -F ".tar" '{print $1}'`
 		    cd $SOFT/$httpd
 		    if [ -f configure ];then
-		      	./configure --prefix=/usr/local/apache --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util/ --enable-so --enable-module=so --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-cache --enable-file-cache --enable-mem-cache --enable-disk-cache --enable-static-support --enable-static-ab --disable-userdir --with-mpm=worker --enable-nonportable-atomics --disable-ipv6 --with-sendfile
+		      	./configure --prefix=/usr/local/apache2 --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util/ --enable-so --enable-module=so --enable-mods-shared=all --enable-deflate=shared --enable-expires=shared --enable-rewrite=shared --enable-cache --enable-file-cache --enable-mem-cache --enable-disk-cache --enable-static-support --enable-static-ab --disable-userdir --with-mpm=worker --enable-nonportable-atomics --disable-ipv6 --with-sendfile
 		     	if [ $? -eq 0 ];then
 					make
 					if [ $? -eq 0 ];then
@@ -335,14 +335,20 @@ httpd_install () {
 }
 
 httpd_set() {
-	apache=/usr/local/apache
+	apache=/usr/local/apache2
 	cd $SOFT
 	mv $apache/conf/httpd.conf $apache/conf/httpd.conf.default
-	cp ../httpd.conf $apache/conf/
+	if [ $input -eq 1 ] && [ $Httpd -eq 1 ];then
+		cp ../httpd-2.2.conf $apache/conf/httpd.conf
+	elif [ $input -eq 1 ] && [ $Httpd -eq 2 ];then
+		cp ../httpd-2.4.conf $apache/conf/httpd.conf
+	elif [ $input -eq 4 ] && [ $Httpd -eq 1 ];then
+		cp ../httpd-2.2.conf $apache/conf/httpd.conf
+	elif [ $input -eq 4 ] && [ $Httpd -eq 2 ];then
+		cp ../httpd-2.4.conf $apache/conf/httpd.conf
+	fi
 	cp $apache/bin/apachectl /etc/init.d/httpd
-	echo "<?php
-	phpinfo();
-?>" >>$apache/htdocs/index.php
+	echo "<?php phpinfo() ?>" >>$apache/htdocs/index.php
 }
 
 #cmake install
@@ -403,20 +409,20 @@ mysql_install () {
 		      	if [ $? -eq 0 ];then
 					echo "Mysql cmake success!"
 					make
-						if [ $? -eq 0 ];then
-			   				echo "Mysql make success!"
-			   				make install
-			     			if [ $? -eq 0 ];then
-			     				clear
-								echo "Mysql install success!"
-			     			else
-			     				clear
-								echo "Mysql make install fail!";exit 1
-			     			fi
-						else
-							clear
-			   				echo "Mysql make fail!";exit 1
-						fi
+					if [ $? -eq 0 ];then
+			   			echo "Mysql make success!"
+			   			make install
+			     		if [ $? -eq 0 ];then
+			     			clear
+							echo "Mysql install success!"
+			     		else
+			     			clear
+							echo "Mysql make install fail!";exit 1
+			     		fi
+					else
+						clear
+			   			echo "Mysql make fail!";exit 1
+					fi
 		      	else
 		      		clear
 					echo "Mysql cmake fail!";exit 1
@@ -690,26 +696,49 @@ php_install () {
 				cd $SOFT/$php
 				if [ -f configure ];then
 		  			echo "Php configure.........."
-		  			./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-apxs2=/usr/local/apache2/bin/apxs2--with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-gd --enable-gd-native-ttf --with-gettext --with-libxml-dir=/usr --enable-xml--disable-rpath --enable-discard-path --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fastcgi --enable-fpm --enable-force-cgi-redirect --enable-mbstring --with-mcrypt --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-zip --enable-soap
-		  			if [ $? -eq 0 ];then
-		     			make
-		     			if [ $? -eq 0 ];then
-							make install
-							if [ $? -eq 0 ];then
-								clear
-			   					echo "Php install success!"
-							else
-								clear
-			   					echo "Php make install fail!";exit 1
-							fi
-		     			else
-		     				clear
-							echo "Php make fail!";exit 1
-		     			fi
-		  			else
-		  				clear
-		     			echo "Php configure fail!";exit 1
-		  			fi
+		  			if [ $input -eq 3 ];then
+		  				./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-gd --enable-gd-native-ttf --with-gettext --with-libxml-dir=/usr --enable-xml--disable-rpath --enable-discard-path --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fastcgi --enable-fpm --enable-force-cgi-redirect --enable-mbstring --with-mcrypt --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-zip --enable-soap
+		  				if [ $? -eq 0 ];then
+		     				make
+		     				if [ $? -eq 0 ];then
+								make install
+								if [ $? -eq 0 ];then
+									clear
+			   						echo "Php install success!"
+								else
+									clear
+			   						echo "Php make install fail!";exit 1
+								fi
+		     				else
+		     					clear
+								echo "Php make fail!";exit 1
+		     				fi
+		  				else
+		  					clear
+		     				echo "Php configure fail!";exit 1
+		  				fi
+		  			elif [ $input -eq 4 ];then
+		  				./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-apxs2=/usr/local/apache2/bin/apxs --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-gd --enable-gd-native-ttf --with-gettext --with-libxml-dir=/usr --enable-xml--disable-rpath --enable-discard-path --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fastcgi --enable-fpm --enable-force-cgi-redirect --enable-mbstring --with-mcrypt --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-zip --enable-soap
+		  				if [ $? -eq 0 ];then
+		     				make
+		     				if [ $? -eq 0 ];then
+								make install
+								if [ $? -eq 0 ];then
+									clear
+			   						echo "Php install success!"
+								else
+									clear
+			   						echo "Php make install fail!";exit 1
+								fi
+		     				else
+		     					clear
+								echo "Php make fail!";exit 1
+		     				fi
+		  				else
+		  					clear
+		     				echo "Php configure fail!";exit 1
+		  				fi
+		  			fi	
 				else
 					clear
 		  			echo "There is no configure!";exit 1
@@ -908,7 +937,21 @@ install_imagick() {
 	                        echo "$IMAGICK make install failed!!";exit 1
 	                    fi
 	                else
-	                    echo "$IMAGICK make failed!!";exit 1
+	                	make clean
+	                	mv imagick_class.c imagick_class.c.default
+	                	cp $FILE_DIR/imagick_class.c ./
+	                    make
+	                    if [ $? -eq 0 ];then
+	                    	make install
+	                    	if [ $? -eq 0 ];then
+	                    		clear 
+	                    		echo "$IMAGICK install successed."
+	                    	else
+	                    		echo "$IMAGICK make install failed!!";exit 1
+	                    	fi
+	                    else
+	                    	echo "$IMAGICK make failed!!";exit 1
+	                    fi
 	                fi
 	            else
 	                echo "$IMAGICK configure failed!!";exit 1
@@ -1017,21 +1060,27 @@ install_tidy() {
 
 #set
 set_php () {
-	id www >/dev/null
-	if [ $? -ne 0 ];then
-		useradd www
-	fi
-	php=`echo $PHP |awk -F '.tar' '{print $1}'`
-	cd $SOFT/$php
-	cp php.ini-production /usr/local/php/etc/php.ini
-	cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
-	chmod 755 /usr/local/php/etc/*
-	echo '
-	extension = imagick.so
-	extension = memcache.so
-	extension = memcached.so
-	;extension = mysql.so
-	;extension = mysqli.so' >>/usr/local/php/etc/php.ini
+id www >/dev/null
+if [ $? -ne 0 ];then
+	useradd www
+fi
+php=`echo $PHP |awk -F '.tar' '{print $1}'`
+cd $SOFT/$php
+cp php.ini-production /usr/local/php/etc/php.ini
+cp sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
+chmod 755 /usr/local/php/etc/*
+chmod 755 /etc/init.d/php-fpm
+echo '
+extension = imagick.so
+extension = ftp.so
+extension = tidy.so
+extension = memcache.so
+extension = memcached.so
+;extension = gettext.so
+;extension = mysql.so
+;extension = mysqli.so' >>/usr/local/php/etc/php.ini
+sed -i 's#; date.timezone =#date.timezone = Asia/Shanghai#' /usr/local/php/etc/php.ini
 }
 
 ######################################################
@@ -1137,6 +1186,7 @@ EOF
 				y)
 				clear
 				start_time
+				choose_mysql_version
 				choose_php_version
 				env_check
 				cmake_install;mysql_install;mysql_set
@@ -1179,7 +1229,7 @@ EOF
 				choose_php_version
 				clear
 				Blue "You had chose $HTTPD $MYSQL $PHP for LAMP install."
-				sleep 5
+				sleep 3
 				env_check
 				apr_install;apr_util_install;apr_iconv_install
 				httpd_install;httpd_set
