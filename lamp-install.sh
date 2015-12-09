@@ -176,7 +176,7 @@ env_check() {
 		cp -r ../lamp/* $SOFT/ || cp -r $dir/lamp/* $SOFT/
 	fi
 	echo "Yum install dependencies.............."
-	yum -y install gcc gcc-c++ pcre-devel make gd-devel autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel net-snmp-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel openldap openldap-devel  openldap-clients openldap-servers libxslt-devel libevent-devel ntp  libtidy libtidy-devel libtool-ltdl bison libtool vim-enhanced
+	yum -y install gcc gcc-c++ pcre-devel make gd-devel autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel net-snmp-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5-devel libidn libidn-devel openssl openssl-devel openldap openldap-devel  openldap-clients openldap-servers libxslt-devel libevent-devel ntp  libtidy libtidy-devel libtool-ltdl bison libtool vim-enhanced dos2unix
 	if [ $? -eq 0 ];then
 		echo "yum install dependencies success!"
 		clear
@@ -340,12 +340,16 @@ httpd_set() {
 	mv $apache/conf/httpd.conf $apache/conf/httpd.conf.default
 	if [ $input -eq 1 ] && [ $Httpd -eq 1 ];then
 		cp ../httpd-2.2.conf $apache/conf/httpd.conf
+		dos2unix $apache/conf/httpd.conf
 	elif [ $input -eq 1 ] && [ $Httpd -eq 2 ];then
 		cp ../httpd-2.4.conf $apache/conf/httpd.conf
+		dos2unix $apache/conf/httpd.conf
 	elif [ $input -eq 4 ] && [ $Httpd -eq 1 ];then
 		cp ../httpd-2.2.conf $apache/conf/httpd.conf
+		dos2unix $apache/conf/httpd.conf
 	elif [ $input -eq 4 ] && [ $Httpd -eq 2 ];then
 		cp ../httpd-2.4.conf $apache/conf/httpd.conf
+		dos2unix $apache/conf/httpd.conf
 	fi
 	cp $apache/bin/apachectl /etc/init.d/httpd
 	echo "<?php phpinfo() ?>" >>$apache/htdocs/index.php
@@ -1271,9 +1275,9 @@ EOF
 			clear
 		else
 			echo 	"==========================================="
-	       		Red 	"|Warning!!You had too many wrong input!!! |"
-	       		Red 	"|Please Enter Right Choice Again After 5s |"
-	       		echo 	"==========================================="
+	       	Red 	"|Warning!!You had too many wrong input!!! |"
+	       	Red 	"|Please Enter Right Choice Again After 5s |"
+	       	echo 	"==========================================="
 			for i in `seq -w 5 -1 1`
 			do
 				echo -en "\b\b$i"
