@@ -13,6 +13,7 @@ IP=`ifconfig eth0 |grep 'inet addr' |awk '{print $2}' |awk -F: '{print $2}'`
 DISK_FREE=`df -h |awk 'NR==2{print $4}'`
 CPU_AVG=`cat /proc/loadavg |cut -c 1-14`
 MEM_FREE=`free -m |awk 'NR==2{print $4}'`
+FILE_DIR=/usr/local/src/lamp[6~
 SOFT=/usr/local/src/lamp/soft
 APR=apr-1.5.2.tar.bz2
 APR_UTIL=apr-util-1.5.4.tar.bz2
@@ -343,16 +344,16 @@ httpd_set() {
 	mv $apache/conf/httpd.conf $apache/conf/httpd.conf.default
 	if [ $input -eq 1 ] && [ $Httpd -eq 1 ];then
 		cp ../httpd-2.2.conf $apache/conf/httpd.conf
-		dos2unix $apache/conf/httpd.conf
+		dos2unix $apache/conf/httpd.conf && chmod 644 $apache/conf/httpd.conf
 	elif [ $input -eq 1 ] && [ $Httpd -eq 2 ];then
 		cp ../httpd-2.4.conf $apache/conf/httpd.conf
-		dos2unix $apache/conf/httpd.conf
+		dos2unix $apache/conf/httpd.conf && chmod 644 $apache/conf/httpd.conf
 	elif [ $input -eq 4 ] && [ $Httpd -eq 1 ];then
 		cp ../httpd-2.2.conf $apache/conf/httpd.conf
-		dos2unix $apache/conf/httpd.conf
+		dos2unix $apache/conf/httpd.conf && chmod 644 $apache/conf/httpd.conf
 	elif [ $input -eq 4 ] && [ $Httpd -eq 2 ];then
 		cp ../httpd-2.4.conf $apache/conf/httpd.conf
-		dos2unix $apache/conf/httpd.conf
+		dos2unix $apache/conf/httpd.conf && chmod 644 $apache/conf/httpd.conf
 	fi
 	cp $apache/bin/apachectl /etc/init.d/httpd
 	echo "<?php phpinfo() ?>" >>$apache/htdocs/index.php
