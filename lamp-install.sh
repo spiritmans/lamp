@@ -95,6 +95,7 @@ choose_httpd_version() {
 		break
 		;;
 		*)
+		Httpd=2
 		HTTPD=httpd-2.4.16.tar.gz
 		Blue "You will install $HTTPD"
 		sleep 2
@@ -123,6 +124,7 @@ choose_mysql_version() {
 		break
 		;;
 		*)
+		Mysql=2
 		MYSQL=mysql-5.6.27.tar.gz
 		Blue "You will install $MYSQL"
 		sleep 2
@@ -157,6 +159,7 @@ choose_php_version() {
 		break
 		;;
 		*)
+		Php=3
 		PHP=php-5.6.14.tar.gz
 		Blue "You will install $PHP"
 		sleep 2
@@ -701,7 +704,7 @@ php_install () {
 				if [ -f configure ];then
 		  			echo "Php configure.........."
 		  			if [ $input -eq 3 ];then
-		  				./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-gd --enable-gd-native-ttf --with-gettext --with-libxml-dir=/usr --enable-xml--disable-rpath --enable-discard-path --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fastcgi --enable-fpm --enable-force-cgi-redirect --enable-mbstring --with-mcrypt --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-zip --enable-soap
+		  				./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-gd --enable-gd-native-ttf --with-pdo-mysql=/usr/local/mysql --with-gettext --with-libxml-dir=/usr --enable-xml--disable-rpath --enable-discard-path --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fastcgi --enable-fpm --enable-force-cgi-redirect --enable-mbstring --with-mcrypt --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-zip --enable-soap
 		  				if [ $? -eq 0 ];then
 		     				make
 		     				if [ $? -eq 0 ];then
@@ -967,40 +970,41 @@ install_imagick() {
     fi
 }
 
-#install_pdo_mysql() {
-#    if [ ! -f $SOFT/$POD_MYSQL ];then
-#        echo "There is no $POD_MYSQL"
-#    else
-#    	cd $SOFT
-#        pdo_mysql=`echo $POD_MYSQL |awk -F ".tgz" '{print $1}'`
-#        tar fx $SOFT/$POD_MYSQL && cd $SOFT/$pdo_mysql
-#        if [ ! -x /usr/local/php/bin/phpize ];then
-#            echo "There is no '/usr/local/php/bin/phpize'";exit 1
-#        else
-#	        /usr/local/php/bin/phpize
-#	        if [ $? -eq 0 ];then
-#	            ./configure --with-php-config=/usr/local/php/bin/php-config --with-pdo-mysql=/usr/local/mysql
-#	            if [ $? -eq 0 ];then
-#	                make
-#	                if [ $? -eq 0 ];then
-#	                    make install
-#	                    if [ $? -eq 0 ];then
-#	                        echo "$POD_MYSQL install successed."
-#	                    else
-#	                        echo "$POD_MYSQL make install failed!!";exit 1
-#	                    fi
-#	                else
-#	                    echo "$POD_MYSQL make failed!!";exit 1
-#	                fi
-#	            else
-#	                echo "$POD_MYSQL configure failed!!";exit 1
-#	            fi
-#	        else
-#	            echo "$POD_MYSQL create configure file failed!!";exit 1
-#	        fi
-#	    fi
-#    fi
-#}
+install_pdo_mysql() {
+	ln -s /usr/local/mysql/include/* /usr/local/include/
+    if [ ! -f $SOFT/$POD_MYSQL ];then
+        echo "There is no $POD_MYSQL"
+    else
+    	cd $SOFT
+        pdo_mysql=`echo $POD_MYSQL |awk -F ".tgz" '{print $1}'`
+        tar fx $SOFT/$POD_MYSQL && cd $SOFT/$pdo_mysql
+        if [ ! -x /usr/local/php/bin/phpize ];then
+            echo "There is no '/usr/local/php/bin/phpize'";exit 1
+        else
+	        /usr/local/php/bin/phpize
+	        if [ $? -eq 0 ];then
+	            ./configure --with-php-config=/usr/local/php/bin/php-config --with-pdo-mysql=/usr/local/mysql
+	            if [ $? -eq 0 ];then
+	                make
+	                if [ $? -eq 0 ];then
+	                    make install
+	                    if [ $? -eq 0 ];then
+	                        echo "$POD_MYSQL install successed."
+	                    else
+	                        echo "$POD_MYSQL make install failed!!";exit 1
+	                    fi
+	                else
+	                    echo "$POD_MYSQL make failed!!";exit 1
+	                fi
+	            else
+	                echo "$POD_MYSQL configure failed!!";exit 1
+	            fi
+	        else
+	            echo "$POD_MYSQL create configure file failed!!";exit 1
+	        fi
+	    fi
+   fi
+}
 
 install_gettext() {
 	cd $SOFT/$php/ext/gettext
