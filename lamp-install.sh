@@ -13,7 +13,7 @@ IP=`ifconfig eth0 |grep 'inet addr' |awk '{print $2}' |awk -F: '{print $2}'`
 DISK_FREE=`df -h |awk 'NR==2{print $4}'`
 CPU_AVG=`cat /proc/loadavg |cut -c 1-14`
 MEM_FREE=`free -m |awk 'NR==2{print $4}'`
-FILE_DIR=/usr/local/src/lamp[6~
+FILE_DIR=/usr/local/src/lamp
 SOFT=/usr/local/src/lamp/soft
 APR=apr-1.5.2.tar.bz2
 APR_UTIL=apr-util-1.5.4.tar.bz2
